@@ -4,8 +4,9 @@
   "description": "",
   "author": "Andy Christianson",
   "license": "ISC",
+  "repository": "https://github.com/NiXXeD/chat",
   "scripts": {
-    "test": "npm install && gulp clean && gulp build"
+    "test": "npm install && gulp clean && gulp build && gulp server"
   },
   "dependencies": {
     "angular": "^1.3.0",
