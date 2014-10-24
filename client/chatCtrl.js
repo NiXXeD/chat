@@ -20,8 +20,7 @@ angular.module('nix-chat')
                 .replace('<p>', '')
                 .replace('</p>', '');
             $scope.chatlog.push(msg);
-            $scope.$apply();
-            scrollToBottom();
+            $timeout(scrollToBottom);
         });
 
         $scope.$on('users', function(event, users) {
