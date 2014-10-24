@@ -42,6 +42,7 @@ angular.module('nix-chat')
                     date: new Date().getTime(),
                     text: 'Users currently chatting: ' + $scope.users.join(', ')
                 });
+                $scope.$apply();
                 scrollToBottom();
             } else if (text.indexOf('/clear') == 0) {
                 $scope.chatlog = [];
