@@ -7,7 +7,7 @@
 body {
     font: 13px Helvetica, Arial;
     padding-bottom: 50px;
-    word-wrap:break-word;
+    word-wrap: break-word;
 }
 
 form {
@@ -39,4 +39,20 @@ form input {
 
 .chattext {
     color: lightgray;
+}
+
+a:link {
+    color: aqua;
+}
+
+a:visited {
+    color: darkcyan;
+}
+
+a:hover {
+    color: aquamarine;
+}
+
+a:active {
+    color: cornflowerblue;
 }
