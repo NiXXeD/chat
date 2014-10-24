@@ -18,7 +18,8 @@ angular.module('nix-chat')
         $scope.$on('chat', function(event, msg) {
             msg.text = marked(msg.text)
                 .replace('<p>', '')
-                .replace('</p>', '');
+                .replace('</p>', '')
+                .replace('a href', 'a target="_blank" href');
             $scope.chatlog.push(msg);
             $timeout(scrollToBottom);
 
