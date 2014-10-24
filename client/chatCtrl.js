@@ -21,6 +21,11 @@ angular.module('nix-chat')
                 .replace('</p>', '');
             $scope.chatlog.push(msg);
             $timeout(scrollToBottom);
+
+            //limit client history to 500 lines
+            if ($scope.chatlog.length > 500) {
+                $scope.chatlog.shift();
+            }
         });
 
         $scope.$on('users', function(event, users) {
