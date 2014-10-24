@@ -14,7 +14,7 @@ var injectReload = require('gulp-inject-reload');
 var paths = {
     base: 'client',
     target: 'build',
-    js: ['client/vendor/socket.io.js',
+    js: ['node_modules/socket.io/node_modules/socket.io-client/socket.io.js',
         'node_modules/angular/angular.js',
         'client/app.js',
         'client/**/*.js'],
