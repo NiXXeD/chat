@@ -1,7 +1,7 @@
 angular.module('chat')
     .controller('chatCtrl', function($scope, $timeout, chatService) {
         $scope.text = null;
-        $scope.nickname = localStorage.nickname || 'Anonymous' + Math.floor((Math.random() * 100) + 1);
+        $scope.nickname = localStorage.nickname || 'User' + Math.floor((Math.random() * 10000) + 1);
         $scope.chatlog = [];
 
         chatService.join($scope.nickname);
