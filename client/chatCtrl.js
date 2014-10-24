@@ -1,4 +1,4 @@
-angular.module('nix-chat')
+angular.module('chat')
     .controller('chatCtrl', function($scope, $timeout, chatService) {
         $scope.text = null;
         $scope.nickname = localStorage.nickname;

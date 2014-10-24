@@ -1,4 +1,4 @@
-angular.module('nix-chat')
+angular.module('chat')
     .service('chatService', function($rootScope) {
         var chatService = {};
 
