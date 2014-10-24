@@ -1,5 +1,5 @@
 angular.module('nix-chat')
-    .controller('chatCtrl', function($scope, $location, $anchorScroll, chatService) {
+    .controller('chatCtrl', function($scope, $timeout, chatService) {
         $scope.text = null;
         $scope.nickname = localStorage.nickname;
         $scope.chatting = ($scope.nickname);
@@ -32,7 +32,12 @@ angular.module('nix-chat')
             var text = $scope.text;
             $scope.text = null;
 
-            if (text.indexOf('/nick') == 0) {
+            if (text.indexOf('/help') == 0) {
+                chatService.systemSay('Available commands:');
+                chatService.systemSay('"/nick [new name]" will change your nickname.');
+                chatService.systemSay('"/clear" will clear your local chat history.');
+                chatService.systemSay('"/users" will output what users are currently chatting.');
+            } else if (text.indexOf('/nick') == 0) {
                 var newNick = text.slice(5);
                 chatService.changeNick($scope.nickname, newNick);
 
