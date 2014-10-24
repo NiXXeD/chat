@@ -11,10 +11,7 @@ angular.module('nix-chat')
             $rootScope.$broadcast('chat', obj);
         });
 
-        socket.on('users', function(users) {
-            $rootScope.$broadcast('users', users);
-        });
-
+        //on reconnect, tell the server who we are
         socket.on('reconnect', function() {
             socket.emit('join', lastNick);
         });
@@ -30,8 +27,24 @@ angular.module('nix-chat')
             socket.emit('join', nick);
         };
 
+        //get list of users
+        chatService.users = function() {
+            socket.emit('users');
+        };
+
+        //on fresh connect, ask for chat history
         chatService.catchUp = function() {
             socket.emit('catchup', {});
+        };
+
+        //have the system report info to us
+        chatService.systemSay = function(text) {
+            var msg = {
+                nickname: 'System',
+                date: new Date().getTime(),
+                text: text
+            };
+            $rootScope.$broadcast('chat', msg);
         };
 
         //change name

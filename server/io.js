@@ -29,42 +29,40 @@ module.exports = function(io) {
             });
         });
 
+        socket.on('users', function() {
+            var users = clients.map(function(val) {
+                return val.nickname;
+            });
+            systemSay('Users currently chatting: ' + users.join(', '), false);
+        });
+
         socket.on('join', function(nick) {
             client.nickname = nick;
-            systemSay(nick + ' has joined the chat. There are ' + clients.length + ' people now chatting.');
-
-            emitUsers();
+            systemSay(nick + ' has joined the chat. There are ' + clients.length + ' people now chatting.', true);
         });
 
         socket.on('changenick', function(msg) {
             client.nickname = msg.newNick;
-            systemSay(msg.oldNick + ' is now known as ' + msg.newNick + '.');
-
-            emitUsers();
+            systemSay(msg.oldNick + ' is now known as ' + msg.newNick + '.', true);
         });
 
         socket.on('disconnect', function() {
             clients.splice(clients.indexOf(client), 1);
-            systemSay(client.nickname + ' has left the chat. There are ' + clients.length + ' people still chatting.');
-
-            emitUsers();
+            systemSay(client.nickname + ' has left the chat. There are ' + clients.length + ' people still chatting.', true);
         });
 
-        function systemSay(text) {
+        function systemSay(text, history) {
             var msg = {
                 nickname: 'System',
                 date: new Date().getTime(),
                 text: text
             };
-            chatHistory.push(msg);
-            io.emit('chat', msg);
-        }
 
-        function emitUsers() {
-            var users = clients.map(function(val) {
-                return val.nickname;
-            });
-            io.emit('users', users);
+            if (history) {
+                chatHistory.push(msg);
+            }
+
+            io.emit('chat', msg);
         }
     });
 

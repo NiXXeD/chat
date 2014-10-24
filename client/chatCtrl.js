@@ -4,7 +4,6 @@ angular.module('nix-chat')
         $scope.nickname = localStorage.nickname;
         $scope.chatting = ($scope.nickname);
         $scope.chatlog = [];
-        $scope.users = [];
 
         $scope.startChatting = function() {
             localStorage.nickname = $scope.nickname;
@@ -40,13 +39,7 @@ angular.module('nix-chat')
                 $scope.nickname = newNick;
                 localStorage.nickname = newNick;
             } else if (text.indexOf('/users') == 0) {
-                $scope.chatlog.push({
-                    nickname: 'System',
-                    date: new Date().getTime(),
-                    text: 'Users currently chatting: ' + $scope.users.join(', ')
-                });
-                $scope.$apply();
-                scrollToBottom();
+                chatService.users();
             } else if (text.indexOf('/clear') == 0) {
                 $scope.chatlog = [];
             } else {
