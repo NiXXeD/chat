@@ -30,11 +30,11 @@ gulp.task('clean', function clean(callback) {
 
 //copy over index.html with livereload if in debug
 gulp.task('build-index', buildIndex(false));
-gulp.task('build-index-livereload', buildIndex(false));
+gulp.task('build-index-livereload', buildIndex(true));
 function buildIndex(debug) {
     return function() {
         gulp.src(paths.index_html, { base: paths.base })
-            .pipe(gulpif(debug, injectReload({ host: 'http://test.nixxed.com' })))
+            .pipe(gulpif(debug, injectReload()))
             .pipe(changed(paths.target, {hasChanged: changed.compareSha1Digest}))
             .pipe(gulp.dest(paths.target));
     }
@@ -54,7 +54,7 @@ gulp.task('build-js', function() {
         .pipe(clip())
         .pipe(sourcemaps.init())
         .pipe(ngAnnotate())
-//        .pipe(uglify())
+        .pipe(uglify())
         .pipe(concat('bundle.js'))
         .pipe(changed(paths.target, {hasChanged: changed.compareSha1Digest}))
         .pipe(sourcemaps.write('.', {addComment: false}))
