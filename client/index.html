@@ -14,13 +14,13 @@
     <ul>
         <li ng-repeat="chat in chatlog">
             <span class="date">{{ ::chat.date | date : '[HH:mm:ss]'}} </span>
-            <span class="{{ ::(chat.nickname == nickname ? 'me' : 'you') }}">{{ ::chat.nickname }}:</span>
-            <span class="{{ ::(chat.to ? 'whispertext' : 'chattext') }}" ng-bind-html="::chat.text"></span>
+            <span class="{{ ::getNickClass(chat) }}">{{ ::chat.nickname }}:</span>
+            <span class="{{ ::getTextClass(chat) }}" ng-bind-html="::chat.text"></span>
         </li>
     </ul>
 </div>
 
-<form ng-submit="processText()">
+<form ng-submit="processCommand()">
     <input ng-model="text" minlength="1" maxlength="255" required>
 </form>
 

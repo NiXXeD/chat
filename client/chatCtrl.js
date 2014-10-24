@@ -1,10 +1,7 @@
 angular.module('chat')
-    .controller('chatCtrl', function($scope, $timeout, chatService) {
+    .controller('chatCtrl', function($scope, chatService, nickService, cmdService) {
         $scope.text = null;
-        $scope.nickname = localStorage.nickname || 'User' + Math.floor((Math.random() * 10000) + 1);
         $scope.chatlog = [];
-
-        chatService.join($scope.nickname);
         chatService.catchUp();
 
         $scope.$on('chat', function(event, msg) {
@@ -23,49 +20,21 @@ angular.module('chat')
             scrollToBottom();
         });
 
-        $scope.$on('users', function(event, users) {
-            $scope.users = users;
+        $scope.$on('clear', function() {
+            $scope.chatlog = [];
         });
 
-        $scope.processText = function processText() {
-            var text = $scope.text;
+        $scope.processCommand = function() {
+            cmdService.process($scope.text);
             $scope.text = null;
+        };
 
-            var split = text.split(' ');
-            var cmd = split.shift().toLowerCase();
-            if (cmd === '/help') {
-                chatService.systemSay('Available commands:');
-                chatService.systemSay('"/nick [new name]" will change your nickname.');
-                chatService.systemSay('"/clear" will clear your local chat history.');
-                chatService.systemSay('"/users" will output what users are currently chatting.');
-                chatService.systemSay('"/t [user] [msg]" will send a private message to a user (also can use /w).');
-            } else if (cmd === '/nick') {
-                var newNick = split.shift();
-                if (newNick) {
-                    chatService.changeNick($scope.nickname, newNick);
+        $scope.getNickClass = function(msg) {
+            return nickService.getNickname() === msg.nickname ? 'me' : 'you';
+        };
 
-                    $scope.nickname = newNick;
-                    localStorage.nickname = newNick;
-                } else {
-                    chatService.systemSay('Please provide a new name.');
-                }
-            } else if (cmd === '/users') {
-                chatService.users();
-            } else if (cmd === '/clear') {
-                $scope.chatlog = [];
-            } else if (cmd === '/t' || cmd === '/w') {
-                var to = split.shift();
-                var msg = split.join(' ');
-                if (to && msg) {
-                    chatService.whisper($scope.nickname, to, msg);
-                } else {
-                    chatService.systemSay('"/t [user] [msg]" will send a private message to a user (also can use /w).')
-                }
-            } else if (cmd.indexOf('/') == 0) {
-                chatService.systemSay('Unknown command ' + cmd);
-            } else {
-                chatService.send($scope.nickname, text);
-            }
+        $scope.getTextClass = function(msg) {
+            return !!msg.to ? 'whispertext' : 'chattext';
         };
 
         function scrollToBottom() {

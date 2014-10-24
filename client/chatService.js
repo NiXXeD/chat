@@ -54,7 +54,7 @@ angular.module('chat')
 
         //on fresh connect, ask for chat history
         chatService.catchUp = function() {
-            socket.emit('catchup', {});
+            socket.emit('catchup');
         };
 
         //have the system report info to us
