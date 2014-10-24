@@ -20,11 +20,8 @@
     </ul>
 </div>
 
-<form ng-submit="processText()" ng-show="::chatting">
+<form ng-submit="processText()">
     <input ng-model="text" minlength="1" maxlength="255" required>
-</form>
-<form ng-submit="startChatting()" ng-show="::!chatting">
-    <input minlength="1" maxlength="30" ng-model="nickname" placeholder="Type a nickname to start" required>
 </form>
 
 <script src="bundle.js"></script>

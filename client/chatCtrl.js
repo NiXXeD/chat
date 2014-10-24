@@ -1,18 +1,10 @@
 angular.module('chat')
     .controller('chatCtrl', function($scope, $timeout, chatService) {
         $scope.text = null;
-        $scope.nickname = localStorage.nickname;
-        $scope.chatting = ($scope.nickname);
+        $scope.nickname = localStorage.nickname || 'Anonymous' + Math.floor((Math.random() * 100) + 1);
         $scope.chatlog = [];
 
-        $scope.startChatting = function() {
-            localStorage.nickname = $scope.nickname;
-            $scope.chatting = true;
-            chatService.join($scope.nickname);
-        };
-        if ($scope.chatting) {
-            chatService.join($scope.nickname);
-        }
+        chatService.join($scope.nickname);
         chatService.catchUp();
 
         $scope.$on('chat', function(event, msg) {
