@@ -61,10 +61,14 @@ angular.module('chat')
                 chatService.users();
             } else if (cmd === '/clear') {
                 $scope.chatlog = [];
-            } else if (cmd === '/t') {
+            } else if (cmd === '/t' || cmd === '/w') {
                 var to = split.shift();
                 var msg = split.join(' ');
-                chatService.whisper($scope.nickname, to, msg);
+                if (to && msg) {
+                    chatService.whisper($scope.nickname, to, msg);
+                } else {
+                    chatService.systemSay('"/t [user] [msg]" will send a private message to a user (also can use /w).')
+                }
             } else if (cmd.indexOf('/') == 0) {
                 chatService.systemSay('Unknown command ' + cmd);
             } else {
