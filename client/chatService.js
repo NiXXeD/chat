@@ -1,14 +1,20 @@
 angular.module('chat')
-    .service('chatService', function($rootScope) {
+    .service('chatService', function($rootScope, $timeout) {
         var chatService = {};
 
         var socket = io();
         var lastNick = null;
 
         //received chat
-        socket.on('chat', function(msg) {
-            var obj = angular.fromJson(msg);
-            $rootScope.$broadcast('chat', obj);
+        socket.on('chat', function(json) {
+            var msg = angular.fromJson(json);
+
+            msg.text = marked(msg.text)
+                .replace('<p>', '')
+                .replace('</p>', '')
+                .replace('a href', 'a target="_blank" href');
+
+            $rootScope.$broadcast('chat', msg);
         });
 
         //on reconnect, tell the server who we are
@@ -17,8 +23,22 @@ angular.module('chat')
         });
 
         //send chat
-        chatService.send = function(chat) {
-            socket.emit('chat', chat);
+        chatService.send = function(from, text) {
+            var msg = {
+                nickname: from,
+                text: text
+            };
+            socket.emit('chat', msg);
+        };
+
+        //send whisper
+        chatService.whisper = function(from, to, text) {
+            var msg = {
+                nickname: from,
+                to: to,
+                text: text
+            };
+            socket.emit('whisper', msg);
         };
 
         //join the chat
@@ -39,12 +59,14 @@ angular.module('chat')
 
         //have the system report info to us
         chatService.systemSay = function(text) {
-            var msg = {
-                nickname: 'System',
-                date: new Date().getTime(),
-                text: text
-            };
-            $rootScope.$broadcast('chat', msg);
+            $timeout(function() {
+                var msg = {
+                    nickname: 'System',
+                    date: new Date().getTime(),
+                    text: text
+                };
+                $rootScope.$broadcast('chat', msg);
+            });
         };
 
         //change name
@@ -53,6 +75,7 @@ angular.module('chat')
                 oldNick: oldNick,
                 newNick: newNick
             };
+            lastNick = newNick;
             socket.emit('changenick', msg);
         };
 

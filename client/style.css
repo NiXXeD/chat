@@ -41,6 +41,10 @@ form input {
     color: lightgray;
 }
 
+.whispertext {
+    color: lightcoral;
+}
+
 a:link {
     color: aqua;
 }

@@ -23,6 +23,29 @@ module.exports = function(io) {
             io.emit('chat', msg);
         });
 
+        socket.on('whisper', function(msg) {
+            msg.date = new Date().getTime();
+
+            //find destination user
+            var expectedName = msg.to.toLowerCase();
+            console.log('expected=', expectedName);
+            var targetClient;
+            clients.forEach(function(client) {
+                console.log('client.nickname=', client.nickname.toLowerCase());
+                if (client.nickname.toLowerCase() === expectedName) {
+                    console.log('found');
+                    targetClient = client;
+                }
+            });
+
+            if (targetClient) {
+                socket.emit('chat', msg);
+                targetClient.socket.emit('chat', msg);
+            } else {
+                systemRespond(socket, 'User not found: ' + msg.to);
+            }
+        });
+
         socket.on('catchup', function() {
             chatHistory.forEach(function(msg) {
                 socket.emit('chat', msg);
@@ -33,25 +56,33 @@ module.exports = function(io) {
             var users = clients.map(function(val) {
                 return val.nickname;
             });
-            systemSay('Users currently chatting: ' + users.join(', '), false);
+            systemRespond(socket, 'Users currently chatting: ' + users.join(', '));
         });
 
         socket.on('join', function(nick) {
             client.nickname = nick;
-            systemSay(nick + ' has joined the chat. There are ' + clients.length + ' people now chatting.', true);
+            systemBroadcast(nick + ' has joined the chat. There are ' + clients.length + ' people now chatting.');
         });
 
         socket.on('changenick', function(msg) {
             client.nickname = msg.newNick;
-            systemSay(msg.oldNick + ' is now known as ' + msg.newNick + '.', true);
+            systemBroadcast(msg.oldNick + ' is now known as ' + msg.newNick + '.');
         });
 
         socket.on('disconnect', function() {
             clients.splice(clients.indexOf(client), 1);
-            systemSay(client.nickname + ' has left the chat. There are ' + clients.length + ' people still chatting.', true);
+            systemBroadcast(client.nickname + ' has left the chat. There are ' + clients.length + ' people still chatting.');
         });
 
-        function systemSay(text, history) {
+        function systemBroadcast(text) {
+            systemSay(io, text, true);
+        }
+
+        function systemRespond(socket, text) {
+            systemSay(socket, text, false);
+        }
+
+        function systemSay(socket, text, history) {
             var msg = {
                 nickname: 'System',
                 date: new Date().getTime(),
@@ -62,7 +93,7 @@ module.exports = function(io) {
                 chatHistory.push(msg);
             }
 
-            io.emit('chat', msg);
+            socket.emit('chat', msg);
         }
     });
 

@@ -14,8 +14,8 @@
     <ul>
         <li ng-repeat="chat in chatlog">
             <span class="date">{{ ::chat.date | date : '[HH:mm:ss]'}} </span>
-            <span class="{{::(chat.nickname == nickname ? 'me' : 'you')}}">{{ ::chat.nickname }}:</span>
-            <span class="chattext" ng-bind-html="::chat.text"></span>
+            <span class="{{ ::(chat.nickname == nickname ? 'me' : 'you') }}">{{ ::chat.nickname }}:</span>
+            <span class="{{ ::(chat.to ? 'whispertext' : 'chattext') }}" ng-bind-html="::chat.text"></span>
         </li>
     </ul>
 </div>

@@ -16,17 +16,19 @@ angular.module('chat')
         chatService.catchUp();
 
         $scope.$on('chat', function(event, msg) {
-            msg.text = marked(msg.text)
-                .replace('<p>', '')
-                .replace('</p>', '')
-                .replace('a href', 'a target="_blank" href');
-            $scope.chatlog.push(msg);
-            $timeout(scrollToBottom);
+            if (Array.isArray(msg)) {
+                $scope.chatlog = $scope.chatlog.concat(msg);
+            } else {
+                $scope.chatlog.push(msg);
+            }
 
             //limit client history to 500 lines
             if ($scope.chatlog.length > 500) {
                 $scope.chatlog.shift();
             }
+
+            $scope.$apply();
+            scrollToBottom();
         });
 
         $scope.$on('users', function(event, users) {
@@ -37,27 +39,35 @@ angular.module('chat')
             var text = $scope.text;
             $scope.text = null;
 
-            if (text.indexOf('/help') == 0) {
+            var split = text.split(' ');
+            var cmd = split.shift().toLowerCase();
+            if (cmd === '/help') {
                 chatService.systemSay('Available commands:');
                 chatService.systemSay('"/nick [new name]" will change your nickname.');
                 chatService.systemSay('"/clear" will clear your local chat history.');
                 chatService.systemSay('"/users" will output what users are currently chatting.');
-            } else if (text.indexOf('/nick') == 0) {
-                var newNick = text.slice(5);
-                chatService.changeNick($scope.nickname, newNick);
+            } else if (cmd === '/nick') {
+                var newNick = split.shift();
+                if (newNick) {
+                    chatService.changeNick($scope.nickname, newNick);
 
-                $scope.nickname = newNick;
-                localStorage.nickname = newNick;
-            } else if (text.indexOf('/users') == 0) {
+                    $scope.nickname = newNick;
+                    localStorage.nickname = newNick;
+                } else {
+                    chatService.systemSay('Please provide a new name.');
+                }
+            } else if (cmd === '/users') {
                 chatService.users();
-            } else if (text.indexOf('/clear') == 0) {
+            } else if (cmd === '/clear') {
                 $scope.chatlog = [];
+            } else if (cmd === '/t') {
+                var to = split.shift();
+                var msg = split.join(' ');
+                chatService.whisper($scope.nickname, to, msg);
+            } else if (cmd.indexOf('/') == 0) {
+                chatService.systemSay('Unknown command ' + cmd);
             } else {
-                var chat = {
-                    nickname: localStorage.nickname,
-                    text: text
-                };
-                chatService.send(chat);
+                chatService.send($scope.nickname, text);
             }
         };
 
