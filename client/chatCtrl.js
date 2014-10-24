@@ -46,6 +46,7 @@ angular.module('chat')
                 chatService.systemSay('"/nick [new name]" will change your nickname.');
                 chatService.systemSay('"/clear" will clear your local chat history.');
                 chatService.systemSay('"/users" will output what users are currently chatting.');
+                chatService.systemSay('"/t [user] [msg]" will send a private message to a user (also can use /w).');
             } else if (cmd === '/nick') {
                 var newNick = split.shift();
                 if (newNick) {
