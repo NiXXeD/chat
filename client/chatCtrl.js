@@ -17,6 +17,9 @@ angular.module('nix-chat')
         chatService.catchUp();
 
         $scope.$on('chat', function(event, msg) {
+            msg.text = marked(msg.text)
+                .replace('<p>', '')
+                .replace('</p>', '');
             $scope.chatlog.push(msg);
             $scope.$apply();
             scrollToBottom();

@@ -1,1 +1,1 @@
-angular.module('nix-chat', []);
+angular.module('nix-chat', ['ngSanitize']);

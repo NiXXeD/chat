@@ -16,6 +16,8 @@ var paths = {
     target: 'build',
     js: ['node_modules/socket.io/node_modules/socket.io-client/socket.io.js',
         'node_modules/angular/angular.js',
+        'node_modules/angular-sanitize/angular-sanitize.js',
+        'node_modules/marked/lib/marked.js',
         'client/app.js',
         'client/**/*.js'],
     css: 'client/style.css',
