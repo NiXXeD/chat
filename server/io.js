@@ -28,12 +28,9 @@ module.exports = function(io) {
 
             //find destination user
             var expectedName = msg.to.toLowerCase();
-            console.log('expected=', expectedName);
             var targetClient;
             clients.forEach(function(client) {
-                console.log('client.nickname=', client.nickname.toLowerCase());
                 if (client.nickname.toLowerCase() === expectedName) {
-                    console.log('found');
                     targetClient = client;
                 }
             });
