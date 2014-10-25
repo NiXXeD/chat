@@ -1,5 +1,5 @@
 angular.module('chat')
-    .service('chatService', function($rootScope, $timeout) {
+    .service('chatService', function($rootScope, $timeout, markdownService) {
         var chatService = {};
 
         var socket = io();
@@ -9,10 +9,7 @@ angular.module('chat')
         socket.on('chat', function(json) {
             var msg = angular.fromJson(json);
 
-            msg.text = marked(msg.text)
-                .replace('<p>', '')
-                .replace('</p>', '')
-                .replace('a href', 'a target="_blank" href');
+            msg.text = markdownService.process(msg.text);
 
             $rootScope.$broadcast('chat', msg);
         });
