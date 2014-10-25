@@ -25,7 +25,6 @@ angular.module('chat')
         //send chat
         chatService.send = function(from, text) {
             var msg = {
-                nickname: from,
                 text: text
             };
             socket.emit('chat', msg);
@@ -34,7 +33,6 @@ angular.module('chat')
         //send whisper
         chatService.whisper = function(from, to, text) {
             var msg = {
-                nickname: from,
                 to: to,
                 text: text
             };
@@ -61,7 +59,7 @@ angular.module('chat')
         chatService.systemSay = function(text) {
             $timeout(function() {
                 var msg = {
-                    nickname: 'System',
+                    from: 'System',
                     date: new Date().getTime(),
                     text: text
                 };

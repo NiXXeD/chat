@@ -14,7 +14,7 @@
     <ul>
         <li ng-repeat="chat in chatlog">
             <span class="date">{{ ::chat.date | date : '[HH:mm:ss]'}} </span>
-            <span class="{{ ::getNickClass(chat) }}">{{ ::chat.nickname }}:</span>
+            <span class="{{ ::getNickClass(chat) }}">{{ ::chat.from }}:</span>
             <span class="{{ ::getTextClass(chat) }}" ng-bind-html="::chat.text"></span>
         </li>
     </ul>

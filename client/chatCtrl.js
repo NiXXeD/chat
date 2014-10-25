@@ -59,7 +59,7 @@ angular.module('chat')
         };
 
         $scope.getNickClass = function(msg) {
-            return nickService.getNickname() === msg.nickname ? 'me' : 'you';
+            return nickService.getNickname() === msg.from ? 'me' : 'you';
         };
 
         $scope.getTextClass = function(msg) {

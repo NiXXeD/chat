@@ -14,7 +14,9 @@ module.exports = function(io) {
         clients.push(client);
 
         socket.on('chat', function(msg) {
+            msg.from = client.nickname;
             msg.date = new Date().getTime();
+
             chatHistory.push(msg);
             if (chatHistory.length > 100) {
                 chatHistory.shift();
@@ -24,6 +26,7 @@ module.exports = function(io) {
         });
 
         socket.on('private', function(msg) {
+            msg.from = client.nickname;
             msg.date = new Date().getTime();
 
             //find destination user
@@ -81,7 +84,7 @@ module.exports = function(io) {
 
         function systemSay(socket, text, history) {
             var msg = {
-                nickname: 'System',
+                from: 'System',
                 date: new Date().getTime(),
                 text: text
             };
