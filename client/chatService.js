@@ -55,7 +55,7 @@ angular.module('chat')
                 var msg = {
                     from: 'System',
                     date: new Date().getTime(),
-                    text: text
+                    text: markdownService.process(text)
                 };
                 $rootScope.$broadcast('chat', msg);
             });

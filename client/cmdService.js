@@ -6,11 +6,11 @@ angular.module('chat')
             var split = text.split(' ');
             var cmd = split.shift().toLowerCase();
             if (cmd === '/help') {
-                chatService.systemSay('Available commands:');
-                chatService.systemSay('"/nick [new name]" will change your nickname.');
-                chatService.systemSay('"/clear" will clear your local chat history.');
-                chatService.systemSay('"/users" will output what users are currently chatting.');
-                chatService.systemSay('"/pm [user] [msg]" will send a private message to a user.');
+                chatService.systemSay('**_Available commands:_**');
+                chatService.systemSay('"**/nick [new name]**" will change your nickname.');
+                chatService.systemSay('"**/clear**" will clear your local chat history.');
+                chatService.systemSay('"**/users**" will output what users are currently chatting.');
+                chatService.systemSay('"**/pm [user] [msg]**" will send a private message to a user.');
             } else if (cmd === '/nick') {
                 var newNick = split.shift();
                 nickService.changeNickname(newNick);
@@ -24,7 +24,7 @@ angular.module('chat')
                 if (to && msg) {
                     chatService.pm(nickService.getNickname(), to, msg);
                 } else {
-                    chatService.systemSay('"/pm [user] [msg]" will send a private message to a user.')
+                    chatService.systemSay('"Invalid private message, see /help for usage.')
                 }
             } else if (cmd.indexOf('/') == 0) {
                 chatService.systemSay('Unknown command ' + cmd);
