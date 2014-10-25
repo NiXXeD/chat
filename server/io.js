@@ -23,7 +23,7 @@ module.exports = function(io) {
             io.emit('chat', msg);
         });
 
-        socket.on('whisper', function(msg) {
+        socket.on('private', function(msg) {
             msg.date = new Date().getTime();
 
             //find destination user

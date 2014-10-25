@@ -38,7 +38,7 @@ angular.module('chat')
                 to: to,
                 text: text
             };
-            socket.emit('whisper', msg);
+            socket.emit('private', msg);
         };
 
         //join the chat
