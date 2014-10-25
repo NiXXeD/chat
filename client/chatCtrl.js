@@ -2,6 +2,8 @@ angular.module('chat')
     .controller('chatCtrl', function($scope, chatService, nickService, cmdService) {
         $scope.text = null;
         $scope.chatlog = [];
+        $scope.history = [];
+        $scope.historyIndex = 0;
         chatService.catchUp();
 
         $scope.$on('chat', function(event, msg) {
@@ -25,8 +27,35 @@ angular.module('chat')
         });
 
         $scope.processCommand = function() {
+            //record command history for up/down arrow
+            $scope.history.push($scope.text);
+            if ($scope.history.length > 15) {
+                $scope.history.shift();
+            }
+            $scope.historyIndex = $scope.history.length;
+
             cmdService.process($scope.text);
             $scope.text = null;
+        };
+
+        $scope.keydown = function(event) {
+            //arrow key up
+            if (event.keyCode == 38 && $scope.historyIndex > 0) {
+                $scope.historyIndex--;
+                $scope.text = $scope.history[$scope.historyIndex];
+            }
+
+            //arrow key down
+            if (event.keyCode == 40 && $scope.historyIndex < $scope.history.length) {
+                $scope.historyIndex++;
+                $scope.text = $scope.history[$scope.historyIndex];
+            }
+
+            //escape key
+            if (event.keyCode == 27) {
+                $scope.text = null;
+                $scope.historyIndex = $scope.history.length;
+            }
         };
 
         $scope.getNickClass = function(msg) {

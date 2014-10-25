@@ -21,7 +21,8 @@
 </div>
 
 <form ng-submit="processCommand()">
-    <input ng-model="text" minlength="1" maxlength="255" required>
+    <input ng-model="text" minlength="1" maxlength="255"
+           ng-keydown="keydown($event)" required>
 </form>
 
 <script src="bundle.js"></script>
