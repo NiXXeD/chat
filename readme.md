@@ -4,12 +4,12 @@ Chat
 Real-time chat application with client-side Markdown rendering using NodeJS, ExpressJS, AngularJS, Socket.io.
 
 
-How to run:
+##### How to run:
 ~~~~
 npm start
 ~~~~
 
-Commands:
+##### Commands:
 ~~~~
 /help - lists all commands
 /nick [name] - change your nickname
