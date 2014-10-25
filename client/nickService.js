@@ -29,7 +29,7 @@ angular.module('chat')
 
         //check validity
         function isValid(test) {
-            return /^[a-zA-Z0-9_-]{3,15}$/.test(test) && test.toLowerCase() !== 'system';
+            return /^[a-zA-Z0-9-]{3,15}$/.test(test) && test.toLowerCase() !== 'system';
         }
 
         return nickService;
