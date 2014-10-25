@@ -12,17 +12,17 @@ var livereload = require('gulp-livereload');
 var injectReload = require('gulp-inject-reload');
 
 var paths = {
-    base: 'client',
-    target: 'build',
-    js: ['node_modules/socket.io/node_modules/socket.io-client/socket.io.js',
-        'node_modules/angular/angular.js',
-        'node_modules/angular-sanitize/angular-sanitize.js',
-        'node_modules/marked/lib/marked.js',
-        'client/app.js',
-        'client/**/*.js'],
-    css: 'client/style.css',
-    index_html: 'client/index.html',
-    html: ['client/**/*.html', '!client/index.html']
+    base: './client',
+    target: './build',
+    js: ['./node_modules/socket.io/node_modules/socket.io-client/socket.io.js',
+        './node_modules/angular/angular.js',
+        './node_modules/angular-sanitize/angular-sanitize.js',
+        './node_modules/marked/lib/marked.js',
+        './client/app.js',
+        './client/**/*.js'],
+    css: './client/style.css',
+    index_html: './client/index.html',
+    html: ['./client/**/*.html', '!client/index.html']
 };
 
 //clean up old build
@@ -51,17 +51,21 @@ gulp.task('build-html', function() {
 });
 
 //minify and concat all js
-gulp.task('build-js', function() {
-    gulp.src(paths.js)
-        .pipe(clip())
-        .pipe(sourcemaps.init())
-        .pipe(ngAnnotate())
-        .pipe(uglify())
-        .pipe(concat('bundle.js'))
-        .pipe(changed(paths.target, {hasChanged: changed.compareSha1Digest}))
-        .pipe(sourcemaps.write('.', {addComment: false}))
-        .pipe(gulp.dest(paths.target));
-});
+gulp.task('build-js', buildJs(false));
+gulp.task('build-js-debug', buildJs(true));
+function buildJs(debug) {
+    return function() {
+        gulp.src(paths.js)
+            .pipe(clip())
+            .pipe(sourcemaps.init())
+            .pipe(ngAnnotate())
+            .pipe(gulpif(!debug, uglify()))
+            .pipe(concat('bundle.js'))
+            .pipe(changed(paths.target, {hasChanged: changed.compareSha1Digest}))
+            .pipe(sourcemaps.write('.'))
+            .pipe(gulp.dest(paths.target));
+    }
+}
 
 //minify and concat all css
 gulp.task('build-css', function() {
@@ -77,7 +81,7 @@ gulp.task('build-css', function() {
 gulp.task('watch', function() {
     gulp.watch(paths.index_html, ['build-index-livereload']);
     gulp.watch(paths.html, ['build-html']);
-    gulp.watch(paths.js, ['build-js']);
+    gulp.watch(paths.js, ['build-js-debug']);
     gulp.watch(paths.css, ['build-css']);
 
     livereload.listen();
@@ -90,5 +94,5 @@ gulp.task('server', function() {
 });
 
 // The default task (called when you run `gulp` from cli)
-gulp.task('default', ['server', 'watch', 'build-index-livereload', 'build-html', 'build-js', 'build-css']);
+gulp.task('default', ['server', 'watch', 'build-index-livereload', 'build-html', 'build-js-debug', 'build-css']);
 gulp.task('build', ['build-index', 'build-html', 'build-js', 'build-css']);
