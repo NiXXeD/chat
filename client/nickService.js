@@ -17,7 +17,7 @@ angular.module('chat')
         //change nick
         nickService.changeNickname = function(newNick) {
             if (isValid(newNick)) {
-                chatService.changeNick(nickname, newNick);
+                chatService.changeNick(newNick);
 
                 nickname = newNick;
                 localStorage.nickname = newNick;

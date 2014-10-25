@@ -22,7 +22,7 @@ angular.module('chat')
                 var to = split.shift();
                 var msg = split.join(' ');
                 if (to && msg) {
-                    chatService.whisper(nickService.getNickname(), to, msg);
+                    chatService.pm(nickService.getNickname(), to, msg);
                 } else {
                     chatService.systemSay('"/pm [user] [msg]" will send a private message to a user.')
                 }

@@ -13,9 +13,12 @@ module.exports = function(io) {
         };
         clients.push(client);
 
-        socket.on('chat', function(msg) {
-            msg.from = client.nickname;
-            msg.date = new Date().getTime();
+        socket.on('chat', function(text) {
+            var msg = {
+                from: client.nickname,
+                date: new Date().getTime(),
+                text: text
+            };
 
             chatHistory.push(msg);
             if (chatHistory.length > 100) {
@@ -64,9 +67,10 @@ module.exports = function(io) {
             systemBroadcast(nick + ' has joined the chat. There are ' + clients.length + ' people now chatting.');
         });
 
-        socket.on('changenick', function(msg) {
-            client.nickname = msg.newNick;
-            systemBroadcast(msg.oldNick + ' is now known as ' + msg.newNick + '.');
+        socket.on('changenick', function(newNick) {
+            var oldnick = client.nickname;
+            client.nickname = newNick;
+            systemBroadcast(oldnick + ' is now known as ' + newNick + '.');
         });
 
         socket.on('disconnect', function() {
