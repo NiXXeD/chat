@@ -20,6 +20,7 @@ module.exports = function(config) {
             './node_modules/socket.io/node_modules/socket.io-client/socket.io.js',
             './node_modules/angular/angular.js',
             './node_modules/angular-mocks/angular-mocks.js',
+            './node_modules/angular-local-storage/dist/angular-local-storage.js',
             './node_modules/angular-sanitize/angular-sanitize.js',
             './node_modules/marked/lib/marked.js',
             'client/app.js',
