@@ -17,3 +17,8 @@ npm start
 /clear - clear the chat history
 /pm [user] [msg] - send a private message to a user
 ~~~~
+
+##### Run tests:
+~~~~
+npm test
+~~~~

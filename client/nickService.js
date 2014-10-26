@@ -5,7 +5,7 @@ angular.module('chat')
         //initialize nickname
         var nickname = localStorage.nickname;
         if (!isValid(nickname)) {
-            nickname = 'User' + Math.floor((Math.random() * 10000) + 1);
+            nickname = 'User' + Math.floor((Math.random() * 99999) + 1);
         }
         chatService.join(nickname);
 
@@ -24,12 +24,11 @@ angular.module('chat')
             } else {
                 chatService.systemSay('Please provide a valid new nickname.');
             }
-            return false;
         };
 
         //check validity
         function isValid(test) {
-            return /^[a-zA-Z0-9-]{3,15}$/.test(test) && test.toLowerCase() !== 'system';
+            return !!test && /^[a-zA-Z0-9-]{3,15}$/.test(test) && test.toLowerCase() !== 'system';
         }
 
         return nickService;

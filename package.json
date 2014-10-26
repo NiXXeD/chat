@@ -6,7 +6,9 @@
   "license": "ISC",
   "repository": "https://github.com/NiXXeD/chat",
   "scripts": {
-    "start": "npm install && gulp clean && gulp build && gulp server"
+    "start": "npm install && gulp clean && gulp build && gulp server",
+    "test": "karma start",
+    "test-single": "karma start --single-run"
   },
   "dependencies": {
     "angular": "^1.3.0",
@@ -21,6 +23,8 @@
     "socket.io": "^1.1.0"
   },
   "devDependencies": {
+    "angular-mocks": "^1.3.0",
+    "chai": "^1.9.2",
     "del": "^0.1.3",
     "gulp": "^3.8.9",
     "gulp-changed": "^1.0.0",
@@ -32,6 +36,15 @@
     "gulp-minify-css": "^0.3.11",
     "gulp-ng-annotate": "^0.3.3",
     "gulp-sourcemaps": "^1.2.4",
-    "gulp-uglify": "^1.0.1"
+    "gulp-uglify": "^1.0.1",
+    "karma": "^0.12.24",
+    "karma-chai": "^0.1.0",
+    "karma-chrome-launcher": "^0.1.5",
+    "karma-coverage": "^0.2.6",
+    "karma-mocha": "^0.1.9",
+    "karma-sinon": "^1.0.3",
+    "karma-sinon-chai": "^0.2.0",
+    "sinon": "^1.10.3",
+    "sinon-chai": "^2.6.0"
   }
 }
