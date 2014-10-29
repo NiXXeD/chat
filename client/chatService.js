@@ -20,12 +20,12 @@ angular.module('chat')
         });
 
         //send chat
-        chatService.send = function(from, text) {
+        chatService.send = function(text) {
             socket.emit('chat', text);
         };
 
         //send whisper
-        chatService.pm = function(from, to, text) {
+        chatService.pm = function(to, text) {
             var msg = {
                 to: to,
                 text: text
