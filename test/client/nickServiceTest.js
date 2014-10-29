@@ -38,7 +38,7 @@ describe('Unit: nickService', function(){
         it('should return the stored value', inject(function(nickService) {
             expect(nickService.getNickname()).to.equal(expected);
             joinSpy.should.have.been.calledWith(expected);
-            setSpy.should.have.callCount(0);
+            setSpy.should.not.have.been.called;
         }));
     });
 
@@ -84,7 +84,7 @@ describe('Unit: nickService', function(){
             expect(actual).to.equal(after);
             expect(actual).not.to.equal(before);
             changeNickSpy.should.have.been.calledWith(after);
-            systemSaySpy.should.have.callCount(0);
+            systemSaySpy.should.not.have.been.called;
             setSpy.should.have.been.calledWith('nickname', after);
         }));
 
@@ -97,9 +97,9 @@ describe('Unit: nickService', function(){
 
             var actual = nickService.getNickname();
             expect(actual).to.equal(before);
-            changeNickSpy.should.have.callCount(0);
-            systemSaySpy.should.have.callCount(1);
-            setSpy.should.have.callCount(0);
+            changeNickSpy.should.not.have.been.called;
+            systemSaySpy.should.have.been.called;
+            setSpy.should.not.have.been.called;
         }));
     });
 });
