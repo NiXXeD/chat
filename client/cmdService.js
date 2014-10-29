@@ -3,7 +3,7 @@ angular.module('chat')
         var cmdService = {};
 
         cmdService.process = function(text) {
-            var split = text.split(' ');
+            var split = (text || '').split(' ');
             var cmd = split.shift().toLowerCase();
             if (cmd === '/help') {
                 chatService.systemSay('**_Available commands:_**');
@@ -22,14 +22,14 @@ angular.module('chat')
                 var to = split.shift();
                 var msg = split.join(' ');
                 if (to && msg) {
-                    chatService.pm(nickService.getNickname(), to, msg);
+                    chatService.pm(to, msg);
                 } else {
-                    chatService.systemSay('"Invalid private message, see /help for usage.')
+                    chatService.systemSay('Invalid private message, see /help for usage.')
                 }
             } else if (cmd.indexOf('/') == 0) {
                 chatService.systemSay('Unknown command ' + cmd);
             } else {
-                chatService.send(nickService.getNickname(), text);
+                chatService.send(text);
             }
         };
 
