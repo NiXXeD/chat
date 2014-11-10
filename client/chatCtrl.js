@@ -4,6 +4,7 @@ angular.module('chat')
         $scope.chatlog = [];
         $scope.history = [];
         $scope.historyIndex = 0;
+        nickService.init();
         chatService.catchUp();
 
         $scope.$on('chat', function(event, msg) {

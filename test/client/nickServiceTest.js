@@ -2,104 +2,77 @@ describe('Unit: nickService', function(){
     beforeEach(module('chat'));
 
     var defaultUserRegex = /^User[0-9]{1,5}$/;
+    var nickService;
+    var chatService;
+    var localStorageService;
+    beforeEach(inject(function($injector) {
+        nickService = $injector.get('nickService');
 
-    describe('on load with empty localStorage', function() {
-        var getSpy;
-        var setSpy;
-        var joinSpy;
+        chatService = $injector.get('chatService');
+        chatService.join = sinon.stub();
+        chatService.changeNick = sinon.stub();
+        chatService.systemSay = sinon.stub();
 
-        beforeEach(inject(function(chatService, localStorageService) {
-            joinSpy = sinon.spy(chatService, 'join');
-            getSpy = sinon.stub(localStorageService, 'get').returns(null);
-            setSpy = sinon.spy(localStorageService, 'set');
-        }));
+        localStorageService = $injector.get('localStorageService');
+        localStorageService.get = sinon.stub();
+        localStorageService.set = sinon.stub();
+    }));
 
-        it('should return a default user', inject(function(nickService) {
-            var actual = nickService.getNickname();
+    it('should use default user when localStorage is empty', function() {
+        localStorageService.get.withArgs('nickname').returns(null);
+        nickService.init();
 
-            assert(defaultUserRegex.test(actual), 'Incorrect nickname: ' + actual);
-            joinSpy.should.have.been.calledWith(actual);
-            setSpy.should.have.been.calledWith('nickname', actual);
-        }));
+        var actual = nickService.getNickname();
+
+        assert(defaultUserRegex.test(actual), 'Incorrect nickname: ' + actual);
+        chatService.join.should.have.been.calledWith(actual);
+        localStorageService.set.should.have.been.calledWith('nickname', actual);
     });
 
-    describe('on load with valid localStorage', function() {
-        var getSpy;
-        var setSpy;
-        var joinSpy;
+    it('should use default user when localStorage when invalid', function() {
+        localStorageService.get.withArgs('nickname').returns('!@#$$%');
+        nickService.init();
+        var actual = nickService.getNickname();
+
+        nickService.getNickname().should.equal(actual);
+        chatService.join.should.have.been.calledWith(actual);
+        localStorageService.set.should.have.been.calledWith('nickname', actual);
+    });
+
+    it('should use localStorage when valid', function() {
         var expected = 'Valid123';
+        localStorageService.get.withArgs('nickname').returns(expected);
+        nickService.init();
 
-        beforeEach(inject(function(chatService, localStorageService) {
-            joinSpy = sinon.spy(chatService, 'join');
-            getSpy = sinon.stub(localStorageService, 'get').returns(expected);
-            setSpy = sinon.spy(localStorageService, 'set');
-        }));
-
-        it('should return the stored value', inject(function(nickService) {
-            expect(nickService.getNickname()).to.equal(expected);
-            joinSpy.should.have.been.calledWith(expected);
-            setSpy.should.not.have.been.called;
-        }));
+        nickService.getNickname().should.equal(expected);
+        chatService.join.should.have.been.calledWith(expected);
+        localStorageService.set.should.not.have.been.called;
     });
 
-    describe('on load with valid localStorage', function() {
-        var getSpy;
-        var setSpy;
-        var joinSpy;
+    it('should support changing nickname to valid', function() {
+        var before = nickService.getNickname();
+        var after = 'abc123';
 
-        beforeEach(inject(function(chatService, localStorageService) {
-            joinSpy = sinon.spy(chatService, 'join');
-            getSpy = sinon.stub(localStorageService, 'get').returns('!@#$$%');
-            setSpy = sinon.spy(localStorageService, 'set');
-        }));
+        nickService.changeNickname(after);
 
-        it('with invalid localStorage, should return a default user', inject(function(nickService) {
-            var actual = nickService.getNickname();
-
-            assert(defaultUserRegex.test(actual), 'Incorrect nickname: ' + actual);
-            joinSpy.should.have.been.calledWith(actual);
-            setSpy.should.have.been.calledWith('nickname', actual);
-        }));
+        after.should.not.equal(before);
+        chatService.changeNick.should.have.been.calledWith(after);
+        chatService.systemSay.should.not.have.been.called;
+        localStorageService.set.should.have.been.calledWith('nickname', after);
     });
 
-    describe('when changing nickname', function() {
-        var changeNickSpy;
-        var systemSaySpy;
-        var setSpy;
-        beforeEach(inject(function(chatService, localStorageService) {
-            sinon.stub(localStorageService, 'get').returns(null);
-            setSpy = sinon.spy(localStorageService, 'set');
-            changeNickSpy = sinon.spy(chatService, 'changeNick');
-            systemSaySpy = sinon.spy(chatService, 'systemSay');
-        }));
+    it('should reject changing nickname to invalid', function() {
+        var before = 'Valid123';
+        localStorageService.get.withArgs('nickname').returns(before);
+        nickService.init();
+        nickService.getNickname().should.equal(before);
 
-        it('should change to abc123', inject(function(nickService) {
-            setSpy.reset();
-            var before = nickService.getNickname();
-            var after = 'abc123';
+        nickService.changeNickname('!@#$%');
+        var after = nickService.getNickname();
 
-            nickService.changeNickname(after);
-
-            var actual = nickService.getNickname();
-            expect(actual).to.equal(after);
-            expect(actual).not.to.equal(before);
-            changeNickSpy.should.have.been.calledWith(after);
-            systemSaySpy.should.not.have.been.called;
-            setSpy.should.have.been.calledWith('nickname', after);
-        }));
-
-        it('should reject invalid name', inject(function(nickService) {
-            setSpy.reset();
-            var before = nickService.getNickname();
-            var after = '!@#$%';
-
-            nickService.changeNickname(after);
-
-            var actual = nickService.getNickname();
-            expect(actual).to.equal(before);
-            changeNickSpy.should.not.have.been.called;
-            systemSaySpy.should.have.been.called;
-            setSpy.should.not.have.been.called;
-        }));
+        before.should.equal(after);
+        chatService.changeNick.should.not.have.been.called;
+        chatService.systemSay.should.have.been.called;
+        localStorageService.set.should.not.have.been.called;
     });
 });

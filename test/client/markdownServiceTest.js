@@ -6,7 +6,7 @@ describe('Unit: markdownService', function() {
 
         var actual = markdownService.process(expected);
 
-        expect(actual).to.equal(expected);
+        actual.should.equal(expected);
     }));
 
     it ('should ignore blockquotes', inject(function(markdownService) {
@@ -15,7 +15,7 @@ describe('Unit: markdownService', function() {
 
         var actual = markdownService.process(input);
 
-        expect(actual).to.equal(expected);
+        actual.should.equal(expected);
     }));
 
     it ('should ignore lists', inject(function(markdownService) {
@@ -24,16 +24,16 @@ describe('Unit: markdownService', function() {
         var actual;
 
         actual = markdownService.process('1. ' + expected);
-        expect(actual).to.equal(expected);
+        actual.should.equal(expected);
 
         actual = markdownService.process('* ' + expected);
-        expect(actual).to.equal(expected);
+        actual.should.equal(expected);
 
         actual = markdownService.process('+ ' + expected);
-        expect(actual).to.equal(expected);
+        actual.should.equal(expected);
 
         actual = markdownService.process('- ' + expected);
-        expect(actual).to.equal(expected);
+        actual.should.equal(expected);
     }));
 
     it ('should ignore headers', inject(function(markdownService) {
@@ -42,22 +42,22 @@ describe('Unit: markdownService', function() {
         var actual;
 
         actual = markdownService.process('# ' + expected);
-        expect(actual).to.equal(expected);
+        actual.should.equal(expected);
 
         actual = markdownService.process('## ' + expected);
-        expect(actual).to.equal(expected);
+        actual.should.equal(expected);
 
         actual = markdownService.process('### ' + expected);
-        expect(actual).to.equal(expected);
+        actual.should.equal(expected);
 
         actual = markdownService.process('#### ' + expected);
-        expect(actual).to.equal(expected);
+        actual.should.equal(expected);
 
         actual = markdownService.process('##### ' + expected);
-        expect(actual).to.equal(expected);
+        actual.should.equal(expected);
 
         actual = markdownService.process('###### ' + expected);
-        expect(actual).to.equal(expected);
+        actual.should.equal(expected);
     }));
 
     it ('should ignore horizontal rules', inject(function(markdownService) {
@@ -66,13 +66,13 @@ describe('Unit: markdownService', function() {
         var actual;
 
         actual = markdownService.process('---');
-        expect(actual).to.equal(expected);
+        actual.should.equal(expected);
 
         actual = markdownService.process('***');
-        expect(actual).to.equal(expected);
+        actual.should.equal(expected);
 
         actual = markdownService.process('___');
-        expect(actual).to.equal(expected);
+        actual.should.equal(expected);
     }));
 
     it ('should ignore images', inject(function(markdownService) {
@@ -80,23 +80,23 @@ describe('Unit: markdownService', function() {
         var input = '![alt text](http://www.invalid.url/some/image.jpg "Text")';
 
         var actual = markdownService.process(input);
-        expect(actual).to.equal(expected);
+        actual.should.equal(expected);
     }));
 
     it ('should hyperlink urls', inject(function(markdownService) {
         var actual;
 
         actual = markdownService.process('http://www.invalid.url/some/image.jpg');
-        expect(actual).to.equal('<a target="_blank" href="http://www.invalid.url/some/image.jpg">http://www.invalid.url/some/image.jpg</a>');
+        actual.should.equal('<a target="_blank" href="http://www.invalid.url/some/image.jpg">http://www.invalid.url/some/image.jpg</a>');
 
         actual = markdownService.process('[Test text](http://www.invalid.url/some/image.jpg)');
-        expect(actual).to.equal('<a target="_blank" href="http://www.invalid.url/some/image.jpg">Test text</a>');
+        actual.should.equal('<a target="_blank" href="http://www.invalid.url/some/image.jpg">Test text</a>');
     }));
 
     it ('should sanitize html', inject(function(markdownService) {
         var actual;
 
         actual = markdownService.process('<bold>test</bold>');
-        expect(actual).to.equal('&lt;bold&gt;test&lt;/bold&gt;');
+        actual.should.equal('&lt;bold&gt;test&lt;/bold&gt;');
     }));
 });

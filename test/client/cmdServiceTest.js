@@ -5,35 +5,35 @@ describe('Unit: cmdService', function() {
     var cmdService;
     var chatService;
     var nickService;
-    beforeEach(inject(function(_$rootScope_, _cmdService_, _chatService_, _nickService_) {
-        $rootScope = _$rootScope_;
-        cmdService = _cmdService_;
-        chatService = _chatService_;
-        nickService = _nickService_;
+    beforeEach(inject(function($injector) {
+        $rootScope = $injector.get('$rootScope');
+        cmdService = $injector.get('cmdService');
+        chatService = $injector.get('chatService');
+        nickService = $injector.get('nickService');
     }));
 
     it('should send plain text', function() {
-        var sendSpy = sinon.spy(chatService, 'send');
+        chatService.send = sinon.stub();
         var expected;
 
         expected = 'some plain input text / or something';
         cmdService.process(expected);
-        sendSpy.should.have.been.calledWith(expected);
+        chatService.send.should.have.been.calledWith(expected);
 
-        sendSpy.reset();
+        chatService.send.reset();
         expected = 'oneword';
         cmdService.process(expected);
-        sendSpy.should.have.been.calledWith(expected);
+        chatService.send.should.have.been.calledWith(expected);
 
-        sendSpy.reset();
+        chatService.send.reset();
         expected = '';
         cmdService.process(expected);
-        sendSpy.should.have.been.calledWith(expected);
+        chatService.send.should.have.been.calledWith(expected);
 
-        sendSpy.reset();
+        chatService.send.reset();
         expected = undefined;
         cmdService.process(expected);
-        sendSpy.should.have.been.calledWith(expected);
+        chatService.send.should.have.been.calledWith(expected);
     });
 
     it('should support /help', function() {
@@ -44,68 +44,68 @@ describe('Unit: cmdService', function() {
     });
 
     it('should support /nick', function() {
-        var changeNicknameSpy = sinon.spy(nickService, 'changeNickname');
+        nickService.changeNickname = sinon.stub();
 
         cmdService.process('/nick firstWord even with spaces');
-        changeNicknameSpy.should.have.been.calledWith('firstWord');
+        nickService.changeNickname.should.have.been.calledWith('firstWord');
 
-        changeNicknameSpy.reset();
+        nickService.changeNickname.reset();
         cmdService.process('/nick');
-        changeNicknameSpy.should.have.been.calledWith(undefined);
+        nickService.changeNickname.should.have.been.calledWith(undefined);
 
-        changeNicknameSpy.reset();
+        nickService.changeNickname.reset();
         cmdService.process('/nick    ');
-        changeNicknameSpy.should.have.been.calledWith('');
+        nickService.changeNickname.should.have.been.calledWith('');
     });
 
     it('should support /users', function() {
-        var usersSpy = sinon.spy(chatService, 'users');
+        chatService.users = sinon.stub();
 
         cmdService.process('/users garbage doesnt matter');
 
-        usersSpy.should.have.been.called;
+        chatService.users.should.have.been.called;
     });
 
     it ('should support /clear', function() {
-        var broadcastSpy = sinon.spy($rootScope, '$broadcast');
+        $rootScope.$broadcast = sinon.stub();
 
         cmdService.process('/clear garbage doesnt matter');
 
-        broadcastSpy.should.have.been.calledWith('clear');
+        $rootScope.$broadcast.should.have.been.calledWith('clear');
     });
 
     it ('should support /pm', function() {
-        var systemSaySpy = sinon.spy(chatService, 'systemSay');
-        var pmSpy = sinon.spy(chatService, 'pm');
+        chatService.systemSay = sinon.stub();
+        chatService.pm = sinon.stub();
 
         cmdService.process('/pm user a big long message');
-        systemSaySpy.should.not.have.been.called;
-        pmSpy.should.have.been.calledWith('user', 'a big long message');
+        chatService.systemSay.should.not.have.been.called;
+        chatService.pm.should.have.been.calledWith('user', 'a big long message');
 
-        systemSaySpy.reset();
-        pmSpy.reset();
+        chatService.systemSay.reset();
+        chatService.pm.reset();
         cmdService.process('/pm user');
-        systemSaySpy.should.have.been.called;
-        pmSpy.should.not.have.been.called;
+        chatService.systemSay.should.have.been.called;
+        chatService.pm.should.not.have.been.called;
 
-        systemSaySpy.reset();
-        pmSpy.reset();
+        chatService.systemSay.reset();
+        chatService.pm.reset();
         cmdService.process('/pm');
-        systemSaySpy.should.have.been.called;
-        pmSpy.should.not.have.been.called;
+        chatService.systemSay.should.have.been.called;
+        chatService.pm.should.not.have.been.called;
 
-        systemSaySpy.reset();
-        pmSpy.reset();
+        chatService.systemSay.reset();
+        chatService.pm.reset();
         cmdService.process('/pm   ');
-        systemSaySpy.should.have.been.called;
-        pmSpy.should.not.have.been.called;
+        chatService.systemSay.should.have.been.called;
+        chatService.pm.should.not.have.been.called;
     });
 
     it ('should reject unknown slash commands', function() {
-        var systemSaySpy = sinon.spy(chatService, 'systemSay');
+        chatService.systemSay = sinon.stub();
 
         cmdService.process('/unknown command stuff');
 
-        systemSaySpy.should.have.been.calledWith('Unknown command /unknown');
+        chatService.systemSay.should.have.been.calledWith('Unknown command /unknown');
     });
 });

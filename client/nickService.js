@@ -1,14 +1,17 @@
 angular.module('chat')
     .service('nickService', function(chatService, localStorageService) {
         var nickService = {};
+        var nickname = null;
 
         //initialize nickname
-        var nickname = localStorageService.get('nickname');
-        if (!isValid(nickname)) {
-            nickname = 'User' + Math.floor((Math.random() * 99999) + 1);
-            localStorageService.set('nickname', nickname);
-        }
-        chatService.join(nickname);
+        nickService.init = function init() {
+            nickname = localStorageService.get('nickname');
+            if (!isValid(nickname)) {
+                nickname = 'User' + Math.floor((Math.random() * 99999) + 1);
+                localStorageService.set('nickname', nickname);
+            }
+            chatService.join(nickname);
+        };
 
         //simple getter
         nickService.getNickname = function() {
