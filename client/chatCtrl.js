@@ -1,18 +1,13 @@
 angular.module('chat')
-    .controller('chatCtrl', function($scope, chatService, nickService, cmdService) {
+    .controller('chatCtrl', function($scope, cmdService) {
         $scope.text = null;
         $scope.chatlog = [];
         $scope.history = [];
         $scope.historyIndex = 0;
-        nickService.init();
-        chatService.catchUp();
+        $scope.nickname = null;
 
         $scope.$on('chat', function(event, msg) {
-            if (Array.isArray(msg)) {
-                $scope.chatlog = $scope.chatlog.concat(msg);
-            } else {
-                $scope.chatlog.push(msg);
-            }
+            $scope.chatlog.push(msg);
 
             //limit client history to 500 lines
             if ($scope.chatlog.length > 500) {
@@ -27,6 +22,10 @@ angular.module('chat')
             $scope.chatlog = [];
         });
 
+        $scope.$on('changenick', function(event, newNick) {
+            $scope.nickname = newNick;
+        });
+
         $scope.processCommand = function() {
             //record command history for up/down arrow
             $scope.history.push($scope.text);
@@ -35,6 +34,7 @@ angular.module('chat')
             }
             $scope.historyIndex = $scope.history.length;
 
+            //process the command
             cmdService.process($scope.text);
             $scope.text = null;
         };
@@ -60,7 +60,7 @@ angular.module('chat')
         };
 
         $scope.getNickClass = function(msg) {
-            return nickService.getNickname() === msg.from ? 'me' : 'you';
+            return $scope.nickname === msg.from ? 'me' : 'you';
         };
 
         $scope.getTextClass = function(msg) {
@@ -70,4 +70,6 @@ angular.module('chat')
         function scrollToBottom() {
             window.scrollTo(0, document.body.scrollHeight);
         }
+
+        cmdService.init();
     });

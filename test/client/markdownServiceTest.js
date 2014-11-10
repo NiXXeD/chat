@@ -1,4 +1,4 @@
-describe('Unit: markdownService', function() {
+describe('markdownService', function() {
     beforeEach(module('chat'));
 
     it('should do nothing with plain text', inject(function(markdownService) {

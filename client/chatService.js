@@ -1,23 +1,29 @@
 angular.module('chat')
-    .service('chatService', function($rootScope, $timeout, markdownService) {
+    .service('chatService', function($rootScope, $timeout, markdownService, socket) {
         var chatService = {};
 
-        var socket = io();
         var lastNick = null;
 
-        //received chat
-        socket.on('chat', function(json) {
-            var msg = angular.fromJson(json);
+        chatService.init = function(nickname) {
+            lastNick = nickname;
 
-            msg.text = markdownService.process(msg.text);
+            //handle new chats
+            socket.on('chat', function(json) {
+                var msg = angular.fromJson(json);
 
-            $rootScope.$broadcast('chat', msg);
-        });
+                msg.text = markdownService.process(msg.text);
 
-        //on reconnect, tell the server who we are
-        socket.on('reconnect', function() {
+                $rootScope.$broadcast('chat', msg);
+            });
+
+            //on reconnect, tell the server who we are
+            socket.on('reconnect', function() {
+                socket.emit('join', lastNick);
+            });
+
             socket.emit('join', lastNick);
-        });
+            socket.emit('catchup');
+        };
 
         //send chat
         chatService.send = function(text) {
@@ -33,20 +39,9 @@ angular.module('chat')
             socket.emit('private', msg);
         };
 
-        //join the chat
-        chatService.join = function(nick) {
-            lastNick = nick;
-            socket.emit('join', nick);
-        };
-
         //get list of users
         chatService.users = function() {
             socket.emit('users');
-        };
-
-        //on fresh connect, ask for chat history
-        chatService.catchUp = function() {
-            socket.emit('catchup');
         };
 
         //have the system report info to us

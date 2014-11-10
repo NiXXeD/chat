@@ -2,6 +2,13 @@ angular.module('chat')
     .service('cmdService', function($rootScope, chatService, nickService) {
         var cmdService = {};
 
+        cmdService.init = function() {
+            nickService.init();
+            var nickname = nickService.getNickname();
+            $rootScope.$broadcast('changenick', nickname);
+            chatService.init(nickname);
+        };
+
         cmdService.process = function(text) {
             var split = (text || '').split(' ');
             var cmd = split.shift().toLowerCase();
@@ -13,7 +20,12 @@ angular.module('chat')
                 chatService.systemSay('"**/pm [user] [msg]**" will send a private message to a user.');
             } else if (cmd === '/nick') {
                 var newNick = split.shift();
-                nickService.changeNickname(newNick);
+                if (nickService.changeNickname(newNick)) {
+                    chatService.changeNick(newNick);
+                    $rootScope.$broadcast('changenick', newNick);
+                } else {
+                    chatService.systemSay('Please provide a valid new nickname.');
+                }
             } else if (cmd === '/users') {
                 chatService.users();
             } else if (cmd === '/clear') {

@@ -3,15 +3,9 @@ describe('Unit: nickService', function(){
 
     var defaultUserRegex = /^User[0-9]{1,5}$/;
     var nickService;
-    var chatService;
     var localStorageService;
     beforeEach(inject(function($injector) {
         nickService = $injector.get('nickService');
-
-        chatService = $injector.get('chatService');
-        chatService.join = sinon.stub();
-        chatService.changeNick = sinon.stub();
-        chatService.systemSay = sinon.stub();
 
         localStorageService = $injector.get('localStorageService');
         localStorageService.get = sinon.stub();
@@ -25,7 +19,6 @@ describe('Unit: nickService', function(){
         var actual = nickService.getNickname();
 
         assert(defaultUserRegex.test(actual), 'Incorrect nickname: ' + actual);
-        chatService.join.should.have.been.calledWith(actual);
         localStorageService.set.should.have.been.calledWith('nickname', actual);
     });
 
@@ -35,7 +28,6 @@ describe('Unit: nickService', function(){
         var actual = nickService.getNickname();
 
         nickService.getNickname().should.equal(actual);
-        chatService.join.should.have.been.calledWith(actual);
         localStorageService.set.should.have.been.calledWith('nickname', actual);
     });
 
@@ -45,7 +37,6 @@ describe('Unit: nickService', function(){
         nickService.init();
 
         nickService.getNickname().should.equal(expected);
-        chatService.join.should.have.been.calledWith(expected);
         localStorageService.set.should.not.have.been.called;
     });
 
@@ -53,11 +44,10 @@ describe('Unit: nickService', function(){
         var before = nickService.getNickname();
         var after = 'abc123';
 
-        nickService.changeNickname(after);
+        var actual = nickService.changeNickname(after);
 
+        actual.should.be.true;
         after.should.not.equal(before);
-        chatService.changeNick.should.have.been.calledWith(after);
-        chatService.systemSay.should.not.have.been.called;
         localStorageService.set.should.have.been.calledWith('nickname', after);
     });
 
@@ -67,12 +57,11 @@ describe('Unit: nickService', function(){
         nickService.init();
         nickService.getNickname().should.equal(before);
 
-        nickService.changeNickname('!@#$%');
+        var actual = nickService.changeNickname('!@#$%');
         var after = nickService.getNickname();
 
+        actual.should.be.false;
         before.should.equal(after);
-        chatService.changeNick.should.not.have.been.called;
-        chatService.systemSay.should.have.been.called;
         localStorageService.set.should.not.have.been.called;
     });
 });
