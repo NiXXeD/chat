@@ -12,23 +12,23 @@ var livereload = require('gulp-livereload');
 var injectReload = require('gulp-inject-reload');
 
 var paths = {
-    base: './client',
+    base: './src/main/client',
     target: './build',
     js: ['./node_modules/socket.io/node_modules/socket.io-client/socket.io.js',
         './node_modules/angular/angular.js',
         './node_modules/angular-sanitize/angular-sanitize.js',
         './node_modules/angular-local-storage/dist/angular-local-storage.js',
         './node_modules/marked/lib/marked.js',
-        './client/app.js',
-        './client/**/*.js'],
-    css: './client/style.css',
-    index_html: './client/index.html',
-    html: ['./client/**/*.html', '!client/index.html']
+        './src/main/client/app.js',
+        './src/main/client/**/*.js'],
+    css: './src/main/client/style.css',
+    index_html: './src/main/client/index.html',
+    html: ['./src/main/client/**/*.html', '!./src/main/client/index.html']
 };
 
 //clean up old build
 gulp.task('clean', function clean(callback) {
-    del(['build'], callback);
+    del([paths.target], callback);
 });
 
 //copy over index.html with livereload if in debug
@@ -91,7 +91,7 @@ gulp.task('watch', function() {
 
 gulp.task('server', function() {
     //start server
-    require('./server/server.js');
+    require('./');
 });
 
 // The default task (called when you run `gulp` from cli)
