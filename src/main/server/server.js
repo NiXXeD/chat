@@ -3,10 +3,13 @@ var app = express();
 var http = require('http').Server(app);
 var compression = require('compression');
 var path = require('path');
+var low = require('lowdb');
+var db = low('db.json');
+var chatHistory = db('chatHistory');
 var io = require('socket.io')(http);
 
 //socket.io stuff
-require('./io')(io);
+require('./io')(io, chatHistory);
 
 //logging
 app.use(require('morgan')('dev'));

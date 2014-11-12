@@ -1,17 +1,18 @@
-var low = require('lowdb');
-var db = low('db.json');
-var chatHistory = db('chatHistory');
-
-module.exports = function(io) {
-
+module.exports = function(io, chatHistory) {
     var clients = [];
 
     io.on('connection', function(socket) {
+        //keep track of clients
         var client = {
             socket: socket,
             nickname: 'Anonymous'
         };
         clients.push(client);
+
+        //on connect, send chat history
+        chatHistory.forEach(function(msg) {
+            socket.emit('chat', msg);
+        });
 
         socket.on('chat', function(text) {
             var msg = {
@@ -47,12 +48,6 @@ module.exports = function(io) {
             } else {
                 systemRespond(socket, 'User not found: ' + msg.to);
             }
-        });
-
-        socket.on('catchup', function() {
-            chatHistory.forEach(function(msg) {
-                socket.emit('chat', msg);
-            });
         });
 
         socket.on('users', function() {
