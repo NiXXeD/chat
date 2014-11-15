@@ -1,4 +1,6 @@
-module.exports = function(io, chatHistory) {
+var chatHistory = require('./chatHistory');
+
+module.exports = function(io) {
     var clients = [];
 
     io.on('connection', function(socket) {
@@ -22,9 +24,6 @@ module.exports = function(io, chatHistory) {
             };
 
             chatHistory.push(msg);
-            if (chatHistory.length > 100) {
-                chatHistory.shift();
-            }
 
             io.emit('chat', msg);
         });
@@ -46,7 +45,7 @@ module.exports = function(io, chatHistory) {
                 socket.emit('chat', msg);
                 targetClient.socket.emit('chat', msg);
             } else {
-                systemRespond(socket, 'User not found: ' + msg.to);
+                systemSay(socket, 'User not found: ' + msg.to, false);
             }
         });
 
@@ -54,7 +53,7 @@ module.exports = function(io, chatHistory) {
             var users = clients.map(function(val) {
                 return val.nickname;
             });
-            systemRespond(socket, 'Users currently chatting: ' + users.join(', '));
+            systemSay(socket, 'Users currently chatting: ' + users.join(', '), false);
         });
 
         socket.on('join', function(nick) {
@@ -75,10 +74,6 @@ module.exports = function(io, chatHistory) {
 
         function systemBroadcast(text) {
             systemSay(io, text, true);
-        }
-
-        function systemRespond(socket, text) {
-            systemSay(socket, text, false);
         }
 
         function systemSay(socket, text, history) {

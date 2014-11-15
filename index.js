@@ -1,1 +1,1 @@
-require('./src/main/server/server');
+require('./src/main/server/httpServer');
