@@ -2,6 +2,7 @@ describe('chatCtrl', function() {
     beforeEach(module('chat'));
 
     var $scope;
+    var $window;
     var cmdService;
     var nickService;
     var createController;
@@ -9,6 +10,9 @@ describe('chatCtrl', function() {
         $scope = $injector.get('$rootScope');
         $scope.$on = sinon.stub();
         $scope.$apply = sinon.stub();
+
+        $window = $injector.get('$window');
+        $window.scrollTo = sinon.stub();
 
         cmdService = $injector.get('cmdService');
         cmdService.init = sinon.stub();
@@ -33,6 +37,7 @@ describe('chatCtrl', function() {
 
             $scope.chatlog.should.contain('chat msg');
             $scope.$apply.should.have.been.called;
+            $window.scrollTo.should.have.been.called;
         });
 
         it('should limit chat history to 500', function() {

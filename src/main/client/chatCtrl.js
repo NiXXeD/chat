@@ -1,5 +1,5 @@
 angular.module('chat')
-    .controller('chatCtrl', function($scope, cmdService, nickService) {
+    .controller('chatCtrl', function($scope, $window, cmdService, nickService) {
         $scope.text = null;
         $scope.chatlog = [];
         $scope.history = [];
@@ -63,6 +63,6 @@ angular.module('chat')
         };
 
         function scrollToBottom() {
-            window.scrollTo(0, document.body.scrollHeight);
+            $window.scrollTo(0, $window.document.body.scrollHeight);
         }
     });
