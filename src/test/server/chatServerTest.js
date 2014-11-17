@@ -66,7 +66,26 @@ describe('chatServer', function() {
         it('should allow changing nickname', function() {
             socket.on.withArgs('changenick').getCall(0).callArgWith(1, 'newnick');
 
+            socket.emit.should.have.been.calledWith('nickchanged', 'newnick');
             io.emit.should.have.been.calledWith('chat');
+        });
+
+        it('should reject invalid nicknames', function() {
+            socket.on.withArgs('changenick').getCall(0).callArgWith(1, '!@#$%');
+            socket.emit.should.not.have.been.calledWith('nickchanged');
+            io.emit.should.not.have.been.called;
+
+            socket.on.withArgs('changenick').getCall(0).callArgWith(1, 'system');
+            socket.emit.should.not.have.been.calledWith('nickchanged');
+            io.emit.should.not.have.been.called;
+
+            socket.on.withArgs('changenick').getCall(0).callArgWith(1, 'anonymous');
+            socket.emit.should.not.have.been.calledWith('nickchanged');
+            io.emit.should.not.have.been.called;
+
+            socket.on.withArgs('changenick').getCall(0).callArg(1);
+            socket.emit.should.not.have.been.calledWith('nickchanged');
+            io.emit.should.not.have.been.called;
         });
 
         it('should handle disconnects', function() {
@@ -93,6 +112,8 @@ describe('chatServer', function() {
                 io.on.withArgs('connection').getCall(0).callArgWith(1, socket3);
                 socket3.on.withArgs('changenick').getCall(0).callArgWith(1, 'User3');
                 socket3.emit.reset();
+
+                io.emit.reset();
             });
 
             it('should support listing users', function() {
@@ -138,6 +159,12 @@ describe('chatServer', function() {
 
                 socket2.emit.should.not.have.been.called;
                 socket3.emit.should.not.have.been.called;
+            });
+
+            it('should reject changing nick to another persons name', function() {
+                socket.on.withArgs('changenick').getCall(0).callArgWith(1, 'user2');
+                socket.emit.should.not.have.been.calledWith('nickchanged');
+                io.emit.should.not.have.been.called;
             });
         });
     });

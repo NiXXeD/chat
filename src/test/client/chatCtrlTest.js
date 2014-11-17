@@ -3,6 +3,7 @@ describe('chatCtrl', function() {
 
     var $scope;
     var cmdService;
+    var nickService;
     var createController;
     beforeEach(inject(function($injector) {
         $scope = $injector.get('$rootScope');
@@ -13,6 +14,9 @@ describe('chatCtrl', function() {
         cmdService.init = sinon.stub();
         cmdService.process = sinon.stub();
 
+        nickService = $injector.get('nickService');
+        nickService.getNickname = sinon.stub();
+
         var $controller = $injector.get('$controller');
         createController = function() {
             return $controller('chatCtrl', { $scope: $scope });
@@ -22,10 +26,6 @@ describe('chatCtrl', function() {
     describe('when loaded', function() {
         beforeEach(function() {
             createController();
-        });
-
-        it('should call cmdService.init on startup', function() {
-            cmdService.init.should.have.been.called;
         });
 
         it('should handle chat events', function() {
@@ -54,14 +54,6 @@ describe('chatCtrl', function() {
             $scope.chatlog.should.be.empty;
         });
 
-        it('should handle changenick events', function() {
-            should.not.exist($scope.nickname);
-
-            $scope.$on.withArgs('changenick').getCall(0).args[1](null, 'nick');
-
-            $scope.nickname.should.equal('nick');
-        });
-
         it('should handle text input', function() {
             $scope.text = 'some command';
 
@@ -81,7 +73,7 @@ describe('chatCtrl', function() {
         });
 
         it('should provide nickname highlight', function() {
-            $scope.nickname = 'nick';
+            nickService.getNickname.returns('nick');
 
             $scope.getNickClass({from: 'nick'}).should.equal('me');
             $scope.getNickClass({from: 'blah'}).should.equal('you');

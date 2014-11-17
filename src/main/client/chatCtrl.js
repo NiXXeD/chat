@@ -1,10 +1,9 @@
 angular.module('chat')
-    .controller('chatCtrl', function($scope, cmdService) {
+    .controller('chatCtrl', function($scope, cmdService, nickService) {
         $scope.text = null;
         $scope.chatlog = [];
         $scope.history = [];
         $scope.historyIndex = 0;
-        $scope.nickname = null;
 
         $scope.$on('chat', function(event, msg) {
             $scope.chatlog.push(msg);
@@ -20,10 +19,6 @@ angular.module('chat')
 
         $scope.$on('clear', function() {
             $scope.chatlog = [];
-        });
-
-        $scope.$on('changenick', function(event, newNick) {
-            $scope.nickname = newNick;
         });
 
         $scope.processCommand = function() {
@@ -60,7 +55,7 @@ angular.module('chat')
         };
 
         $scope.getNickClass = function(msg) {
-            return $scope.nickname === msg.from ? 'me' : 'you';
+            return nickService.getNickname() === msg.from ? 'me' : 'you';
         };
 
         $scope.getTextClass = function(msg) {
@@ -70,6 +65,4 @@ angular.module('chat')
         function scrollToBottom() {
             window.scrollTo(0, document.body.scrollHeight);
         }
-
-        cmdService.init();
     });

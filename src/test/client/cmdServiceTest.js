@@ -17,18 +17,6 @@ describe('cmdService', function() {
         cmdService = $injector.get('cmdService');
     }));
 
-    it('should initialize nickService and chatService', function() {
-        chatService.init = sinon.stub();
-        nickService.init = sinon.stub();
-        nickService.getNickname = sinon.stub().returns('nick');
-
-        cmdService.init();
-
-        $rootScope.$broadcast.should.have.been.calledWith('changenick', 'nick');
-        nickService.init.should.have.been.called;
-        chatService.init.should.have.been.calledWith('nick');
-    });
-
     it('should send plain text', function() {
         chatService.send = sinon.stub();
 
@@ -68,9 +56,7 @@ describe('cmdService', function() {
 
         cmdService.process('/nick firstWord even with spaces');
 
-        $rootScope.$broadcast.should.have.been.calledWith('changenick', expected);
         nickService.changeNickname.should.have.been.calledWith(expected);
-        chatService.changeNick.should.have.been.calledWith(expected);
     });
 
     it('should reject bad nicknames from /nick', function() {
@@ -82,7 +68,6 @@ describe('cmdService', function() {
         cmdService.process('/nick    ');
         cmdService.process('/nick !@#$%^');
 
-        chatService.changeNick.should.not.have.been.called;
         chatService.systemSay.should.have.been.called;
     });
 

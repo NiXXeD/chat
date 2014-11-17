@@ -2,28 +2,14 @@ angular.module('chat')
     .service('chatService', function($rootScope, $timeout, markdownService, socket) {
         var chatService = {};
 
-        var lastNick = null;
+        //handle new chats
+        socket.on('chat', function(json) {
+            var msg = angular.fromJson(json);
 
-        chatService.init = function(nickname) {
-            lastNick = nickname;
+            msg.text = markdownService.process(msg.text);
 
-            //handle new chats
-            socket.on('chat', function(json) {
-                var msg = angular.fromJson(json);
-
-                msg.text = markdownService.process(msg.text);
-
-                $rootScope.$broadcast('chat', msg);
-            });
-
-            //on reconnect, tell the server who we are
-            socket.on('reconnect', function() {
-                socket.emit('join', lastNick);
-            });
-
-            socket.emit('join', lastNick);
-            socket.emit('catchup');
-        };
+            $rootScope.$broadcast('chat', msg);
+        });
 
         //send chat
         chatService.send = function(text) {
@@ -54,12 +40,6 @@ angular.module('chat')
                 };
                 $rootScope.$broadcast('chat', msg);
             });
-        };
-
-        //change name
-        chatService.changeNick = function(newNick) {
-            lastNick = newNick;
-            socket.emit('changenick', newNick);
         };
 
         return chatService;

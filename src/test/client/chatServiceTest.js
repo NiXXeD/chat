@@ -22,28 +22,13 @@ describe('chatService', function() {
         chatService = $injector.get('chatService');
     }));
 
-    it('should handle init', function() {
-        chatService.init('nick');
-
-        socket.emit.should.have.been.calledWith('join', 'nick');
-        socket.emit.should.have.been.calledWith('catchup');
-    });
-
     it('should setup handler for: chat', function() {
         var expected = 'test text';
         var msg = { text: expected };
-        chatService.init();
         socket.on.withArgs('chat').callArgWith(1, msg);
 
         markdownService.process.should.have.been.calledWith(expected);
         $rootScope.$broadcast.should.have.been.calledWith('chat', msg);
-    });
-
-    it('should setup handler for: reconnect', function() {
-        chatService.init();
-        socket.on.withArgs('reconnect').callArg(1);
-
-        socket.emit.should.have.been.called;
     });
 
     it('should support outgoing chat', function() {
@@ -62,12 +47,6 @@ describe('chatService', function() {
         chatService.users();
 
         socket.emit.should.have.been.calledWith('users');
-    });
-
-    it('should support changing nicknames', function() {
-        chatService.changeNick('newNick');
-
-        socket.emit.should.have.been.calledWith('changenick', 'newNick');
     });
 
     it('should support system messages', function() {

@@ -62,9 +62,14 @@ module.exports = function(io) {
         });
 
         socket.on('changenick', function(newNick) {
-            var oldnick = client.nickname;
-            client.nickname = newNick;
-            systemBroadcast(oldnick + ' is now known as ' + newNick + '.');
+            var oldNick = client.nickname;
+            if (isNickValid(oldNick, newNick)) {
+                client.nickname = newNick;
+                socket.emit('nickchanged', newNick);
+                systemBroadcast(oldNick + ' is now known as ' + newNick + '.');
+            } else {
+                systemSay(socket, 'Please provide a valid new nickname.', false);
+            }
         });
 
         socket.on('disconnect', function() {
@@ -88,6 +93,17 @@ module.exports = function(io) {
             }
 
             socket.emit('chat', msg);
+        }
+
+        function isNickValid(oldNick, newNick) {
+            var valid = !!newNick;
+            valid = valid && /^[a-zA-Z0-9-]{3,15}$/.test(newNick);
+            valid = valid && newNick.toLowerCase() !== 'system';
+            valid = valid && newNick != oldNick;
+            valid = valid && !clients.some(function(client) {
+                return client.nickname.toLowerCase() === newNick.toLowerCase();
+            });
+            return valid;
         }
     });
 
