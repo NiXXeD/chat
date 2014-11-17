@@ -1,8 +1,10 @@
 Chat
-===========
-
+====
 Real-time chat application with client-side Markdown rendering using NodeJS, ExpressJS, AngularJS, Socket.io.
 
+Example
+=======
+http://chat.nixxed.com
 
 ##### How to run:
 ~~~~
