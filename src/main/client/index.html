@@ -10,11 +10,11 @@
 </head>
 <body ng-app="chat" ng-controller="chatCtrl" style="background-color:#333333;">
 
-<div class="ng-cloak">
+<div>
     <ul>
         <li ng-repeat="chat in chatlog">
-            <span class="date">{{ ::chat.date | date : '[HH:mm:ss]'}} </span>
-            <span class="{{ ::getNickClass(chat) }}">{{ ::chat.from }}:</span>
+            <span class="date" ng-bind="::chat.date | date : '[HH:mm:ss]'"></span>
+            <span class="{{ ::getNickClass(chat) }}" ng-bind="::chat.from"></span>
             <span class="{{ ::getTextClass(chat) }}" ng-bind-html="::chat.text"></span>
         </li>
     </ul>
