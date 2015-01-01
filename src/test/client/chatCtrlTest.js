@@ -9,7 +9,7 @@ describe('chatCtrl', function() {
     beforeEach(inject(function($injector) {
         $scope = $injector.get('$rootScope');
         $scope.$on = sinon.stub();
-        $scope.$apply = sinon.stub();
+        $scope.$apply = sinon.stub().callsArg(0);
 
         $window = $injector.get('$window');
         $window.scrollTo = sinon.stub();
@@ -36,7 +36,25 @@ describe('chatCtrl', function() {
             $scope.$on.withArgs('chat').getCall(0).args[1](null, 'chat msg');
 
             $scope.chatlog.should.contain('chat msg');
-            $scope.$apply.should.have.been.called;
+            $window.scrollTo.should.have.been.called;
+        });
+
+        it('should handle visibility events', function() {
+            $scope.visible.should.be.true;
+            $scope.$on.withArgs('visibilityChanged').getCall(0).args[1](null, true);
+            $scope.visible.should.be.false;
+
+            $scope.title = 'blah';
+            $scope.$on.withArgs('visibilityChanged').getCall(0).args[1](null, false);
+            $scope.title.should.equal('Chat');
+        });
+
+        it('should update title bar when not visible', function() {
+            $scope.$on.withArgs('visibilityChanged').getCall(0).args[1](null, true);
+            $scope.$on.withArgs('chat').getCall(0).args[1](null, 'chat msg');
+
+            $scope.chatlog.should.contain('chat msg');
+            $scope.title.should.equal('** Chat **');
             $window.scrollTo.should.have.been.called;
         });
 

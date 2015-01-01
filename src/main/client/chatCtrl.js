@@ -1,20 +1,29 @@
 angular.module('chat')
-    .controller('chatCtrl', function($scope, $window, cmdService, nickService) {
+    .controller('chatCtrl', function($scope, $window, $document, cmdService, nickService) {
         $scope.text = null;
+        $scope.title = 'Chat';
+        $scope.visible = true;
         $scope.chatlog = [];
         $scope.history = [];
         $scope.historyIndex = 0;
 
         $scope.$on('chat', function(event, msg) {
-            $scope.chatlog.push(msg);
+            $scope.$apply(function() {
+                $scope.chatlog.push(msg);
 
-            //limit client history to 500 lines
-            if ($scope.chatlog.length > 500) {
-                $scope.chatlog.shift();
-            }
+                //limit client history to 500 lines
+                if ($scope.chatlog.length > 500) {
+                    $scope.chatlog.shift();
+                }
+            });
 
-            $scope.$apply();
             scrollToBottom();
+
+            if (!$scope.visible) {
+                $scope.$apply(function() {
+                    $scope.title = '** Chat **';
+                });
+            }
         });
 
         $scope.$on('clear', function() {
@@ -61,6 +70,15 @@ angular.module('chat')
         $scope.getTextClass = function(msg) {
             return !!msg.to ? 'whispertext' : 'chattext';
         };
+
+        $scope.$on('visibilityChanged', function(event, isHidden) {
+            $scope.visible = !isHidden;
+            if ($scope.visible) {
+                $scope.$apply(function() {
+                    $scope.title = 'Chat';
+                });
+            }
+        }, false);
 
         function scrollToBottom() {
             $window.scrollTo(0, $window.document.body.scrollHeight);

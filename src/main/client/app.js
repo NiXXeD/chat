@@ -4,4 +4,7 @@ angular.module('chat', [
 ])
     .config(function(localStorageServiceProvider) {
         localStorageServiceProvider.setPrefix('');
+    })
+    .run(function(visibilityService) {
+        visibilityService.load();
     });
