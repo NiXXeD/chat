@@ -67,12 +67,12 @@ function buildJs(debug) {
     return function() {
         gulp.src(paths.client.js)
             .pipe(clip())
-            .pipe(sourcemaps.init())
+            .pipe(gulpif(!debug,sourcemaps.init()))
             .pipe(ngAnnotate())
             .pipe(gulpif(!debug, uglify()))
             .pipe(concat('bundle.js'))
             .pipe(changed(paths.target, {hasChanged: changed.compareSha1Digest}))
-            .pipe(sourcemaps.write('.'))
+            .pipe(gulpif(!debug, sourcemaps.write('.')))
             .pipe(gulp.dest(paths.target));
     }
 }
